@@ -255,7 +255,7 @@ import matplotlib.pyplot as plt
 *opcional: aplique un estilo a Matplotlib.
 '''
 print(plt.style.available)
-mpl.style.use[['fivethirtyeight']]#Ponemos el estilo fivethirtyeight
+mpl.style.use(['fivethirtyeight'])#Ponemos el estilo fivethirtyeight
 
 '''
 Trazando en pandas
@@ -279,4 +279,125 @@ Podemos visualizar rápidamente este esfuerzo usando un diagrama de líneas:
 Pregunta: Trace un gráfico lineal de la inmigración desde Haití usando df.plot().
 
 Primero, extraeremos la serie de datos de Haití.
+'''
+haiti = df_can.loc['Haiti', years]
+#A continuación, trazaremos un diagrama de líneas agregando `.plot()` al marco de datos `haiti`.
+haiti.plot()
+'''
+pandas llena automáticamente el eje x con los valores del índice (años) y el eje y con los valores de la columna (población).
+
+Etiquetemos los ejes xey usando plt.title(), plt.ylabel() y plt.xlabel() de la siguiente manera:
+'''
+haiti.plot(kind='line')
+plt.title('Inmigrantes de Haiti')
+plt.ylabel('Nº de inmigrantes')
+plt.xlabel('Años')
+
+plt.show()
+
+'''
+Podemos notar claramente cómo el número de inmigrantes de Haití aumentó a partir de 2010 cuando Canadá intensificó sus esfuerzos para aceptar refugiados de Haití.
+Anotemos este pico en la gráfica usando el método plt.text().
+'''
+haiti.plot(kind='line')
+plt.title('Inmigrantes de Haiti')
+plt.ylabel('Nº de inmigrantes')
+plt.xlabel('Años')
+plt.text(20, 6000, 'Terremoto de 2010')
+# En caso de que los valores sean enteros se utilizaria de esta manera plt.text(2000, 6000, '2010 Terremoto')
+plt.show() 
+
+'''
+¡Con solo unas pocas líneas de código, pudo identificar y visualizar rápidamente el aumento en la inmigración!
+
+Nota rápida sobre los valores x e y en plt.text(x, y, etiqueta):
+
+ Dado que el eje x (años) es de tipo "entero", especificamos x como un año. El eje y (número de inmigrantes) es de tipo 'entero', por lo que podemos especificar el valor y = 6000.
+    plt.text(2000, 6000, 'Terremoto de 2010') # años almacenados como tipo int
+ Si los años se almacenaran como tipo 'cadena', necesitaríamos especificar x como la posición del índice del año. Por ejemplo, el vigésimo índice es el año 2000, 
+    ya que es el vigésimo año con un año base de 1980.
+    plt.text(20, 6000, 'Terremoto de 2010') # años almacenados como tipo int
+Cubriremos métodos de anotación avanzada en módulos posteriores.
+Podemos agregar fácilmente más países al gráfico de líneas para hacer comparaciones significativas con la inmigración de diferentes países.
+
+Pregunta: Comparemos el número de inmigrantes de India y China de 1980 a 2013.
+
+Paso 1: obtenga el conjunto de datos para China e India y muestre el marco de datos.
+'''
+df_CI = df_can.loc[['India', 'China'], years]
+#Paso 2: Trazar el gráfico. Especificaremos explícitamente el gráfico de líneas pasando el parámetro de tipo a plot().
+df_CI.plot(kind='line')
+'''
+Eso no se ve bien...
+
+Recuerde que pandas traza los índices en el eje x y las columnas como líneas individuales en el eje y. Dado que df_CI es un marco de datos con el país como índice y años como columnas,
+primero debemos transponer el marco de datos usando el método transpose() para intercambiar la fila y las columnas.
+'''
+df_CI = df_CI.transpose()
+'''
+Panda automáticamente pondran los dos países en el mismo gráfico. Continúe y trace el nuevo marco de datos transpuesto. 
+Asegúrese de agregar un título al gráfico y etiquetar los ejes
+'''
+df_CI.index = df_CI.index.map(int)
+df_CI.plot(kind='line')
+
+plt.title('Inmigrantes de China e India')
+plt.ylabel('Nº de inmigrantes')
+plt.xlabel('Años')
+
+plt.show()
+'''
+Del gráfico anterior, podemos observar que China y la India tienen tendencias de inmigración muy similares a lo largo de los años.
+
+Nota: ¿Cómo es que no necesitábamos transponer el marco de datos de Haití antes de trazar (como hicimos para df_CI)?
+
+Esto se debe a que Haití es una serie en lugar de un marco de datos, y tiene los años como índices, como se muestra a continuación.
+
+print(type(haiti))
+print(haiti.head(5))
+    class 'pandas.core.series.Series'
+    1980 1666
+    1981 3692
+    1982 3498
+    1983 2860
+    1984 1418
+    Name: Haiti, dtype: int64
+
+Pregunta: Compare la tendencia de los cinco países que más contribuyeron a la inmigración a Canadá.
+'''
+#La respuesta correcta es:    
+#Paso 1: Obtenga el conjunto de datos. Recuerde que creamos una columna Total que calcula la inmigración acumulada por país. 
+#Ordenaremos esta columna para obtener nuestros 5 países principales utilizando el método pandas sort_values().
+inplace = True # paramemter saves the changes to the original df_can dataframe
+df_can.sort_values(by='Total', ascending=False, axis=0, inplace=True)
+
+df_top5 = df_can.head(5)
+
+df_top5 = df_top5[years].transpose() 
+
+print(df_top5)
+
+
+#Paso 2: Trazar el marco de datos. Para que la trama sea más legible, cambiaremos el tamaño usando el parámetro `figsize`.
+df_top5.index = df_top5.index.map(int) 
+df_top5.plot(kind='line', figsize=(14, 8)) 
+
+
+plt.title('Tendencia de inmigración de los 5 principales países')
+plt.ylabel('Nº de inmigrantes')
+plt.xlabel('Años')
+plt.show()
+'''
+Otras graficas
+
+bar para gráficos de barras verticales
+barh para gráficos de barras horizontales
+hist para histograma
+box para diagrama de caja
+kde o densidad para gráficos de densidad
+area para parcelas de área
+pastel para diagramas de pastel
+scatter para diagramas de dispersión
+hexbin para el diagrama hexbin
+
 '''
