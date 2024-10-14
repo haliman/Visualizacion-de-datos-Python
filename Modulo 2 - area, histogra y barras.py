@@ -346,3 +346,120 @@ económica en 2008-2011 y un importante malestar político.
 
 **Pregunta:** Comparemos el número de inmigrantes islandeses (país = 'Islandia') en Canadá desde el año 1980 al 2013.
 '''
+df_iceland = df_can.loc['Iceland', years]
+
+df_iceland.plot(
+    kind='bar', 
+    figsize=(10, 6)
+    )
+
+plt.xlabel('Año')
+plt.ylabel('Número de inmigrantes')
+plt.title('Inmigración de islandia a canada desde 1980 a 2013')
+plt.show()
+
+'''
+El gráfico de barras de arriba muestra el número total de inmigrantes desglosado por año. Podemos ver claramente el impacto de la crisis financiera; 
+El número de inmigrantes a Canadá comenzó a aumentar rápidamente después de 2008. 
+
+Anotemos esto en el gráfico usando el método `annotate` de la **scripting layer** o la **pyplot interface**. Pasaremos los siguientes parámetros:
+- `s`: str, el texto de la anotación.
+- `xy`: Tupla que especifica el punto (x,y) a anotar (en este caso, el punto final de la flecha).
+- `xytext`: Tupla que especifica el punto (x,y) para colocar el texto (en este caso, punto inicial de la flecha).
+- `xycoords`: el sistema de coordenadas en el que se proporciona xy - 'data' utiliza el sistema de coordenadas del objeto que se está anotando (predeterminado).
+- `arrowprops`: Toma un diccionario de propiedades para dibujar la flecha:
+    - `arrowstyle`: especifica el estilo de la flecha, `'->'` es la flecha estándar.
+    - `connectionstyle`: Especifica el tipo de conexión. `arc3` es una línea recta.
+    - `color`: especifica el color de la flecha.
+    - `lw`: Especifica el ancho de la línea.
+
+Le recomiendo que lea la documentación de Matplotlib para obtener más detalles sobre las anotaciones: 
+http://matplotlib.orsg/api/pyplot_api.html#matplotlib.pyplot.annotate.
+'''
+df_iceland.plot(
+    kind='bar', 
+    figsize=(10, 6), 
+    rot=90
+    ) 
+
+plt.xlabel('Año')
+plt.ylabel('Número de inmigrantes')
+plt.title('Inmigración de islandia a canada desde 1980 a 2013')
+
+plt.annotate('', # s: str. Lo dejaré en blanco para no seguir
+             xy=(32, 70), # coloque la cabeza de la flecha en el punto (año 2012, pop 70)
+             xytext=(28,20), # coloque la base de la flecha en el punto (año 2008, pop 20)
+             xycoords=('data'), # utilizará el sistema de coordenadas del objeto que se está anotando
+             arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2)
+             )
+
+plt.show()
+
+'''
+También anotamos un texto para pasar sobre la flecha.  Pasaremos los siguientes parámetros adicionales:
+- `rotación`: ángulo de rotación del texto en grados (en el sentido contrario a las agujas del reloj)
+- `va`: alineación vertical del texto [‘centro’ | 'arriba' | 'abajo' | 'base']
+- `ha`: alineación horizontal del texto [‘centro’ | 'correcto' | 'izquierda']
+'''
+df_iceland.plot(kind='bar', figsize=(10, 6), rot=90)
+
+plt.xlabel('Año')
+plt.ylabel('Número de inmigrantes')
+plt.title('Inmigración de islandia a canada desde 1980 a 2013')
+
+# Annotate arrow
+plt.annotate('',  
+             xy=(32, 70),
+             xytext=(28, 20),
+             xycoords='data',
+             arrowprops=dict(arrowstyle='->', connectionstyle='arc3', color='blue', lw=2)
+             )
+
+# Annotate Text
+plt.annotate('2008 - 2011 Crisis financiera',  
+             xy=(28, 30),
+             rotation=72.5,
+             va='bottom',
+             ha='left',
+             )
+
+plt.show()
+
+'''
+**Gráfica de barras horizontales**
+
+A veces es más práctico representar los datos horizontalmente, especialmente si necesitas más espacio para etiquetar las barras. En los gráficos de barras horizontales,
+el eje y se utiliza para etiquetar y la longitud de las barras en el eje x corresponde a la magnitud de la variable que se está midiendo. Como verá, hay más espacio en el eje
+y para etiquetar variables categóricas.
+
+
+**Pregunta:** Utilizando el script más adelante y el conjunto de datos `df_can`, cree un diagrama de barras *horizontal* que muestre el número *total* de inmigrantes a Canadá
+de los 15 principales países, para el período 1980 - 2013. Etiquete cada país con el recuento total de inmigrantes.
+'''
+df_can.sort_values(by='Total', ascending=True, inplace=True)
+df_top15 = df_can['Total'].tail(15)
+
+'''
+Paso 2: Trazar gráfica:
+   1. Utilice `kind='barh'` para generar un gráfico de barras con barras horizontales.
+   2. Asegúrate de elegir un buen tamaño para el gráfico, etiquetar tus ejes y darle un título al gráfico.
+   3. Recorra los países y anote la población inmigrante utilizando la función de anotación de la interfaz de secuencias de comandos.
+'''
+
+df_top15.plot(
+    kind='barh', 
+    figsize=(12, 12), 
+    color='steelblue'
+    )
+plt.xlabel('Número de inmigrantes')
+plt.title('Top 15 de los países con más inmigración a Canada entre 1980 - 2013')
+
+for index, value in enumerate(df_top15): 
+    label = format(int(value), ',') 
+    plt.annotate(
+        label, 
+        xy=(value - 47000, index - 0.10), 
+        color='white'
+        )
+
+plt.show()
